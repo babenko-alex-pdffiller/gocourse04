@@ -57,11 +57,13 @@ func main() {
 
 	eastExpressPart[0] = 1_000_000
 	fmt.Println(eastExpressPart)
+	fmt.Println(eastExpress)
 
 	// 5
 	almostLastExpress := []int{1, 2, 3}
 	almostLastExpressCopy := make([]int, 3, 3)
 	copy(almostLastExpressCopy, almostLastExpress)
+	fmt.Println(almostLastExpress, almostLastExpressCopy)
 
 	almostLastExpress[2] = 2
 	almostLastExpressCopy[0] = 0
@@ -72,4 +74,9 @@ func main() {
 	lastExpressPart := lastExpress[0:1:5]
 	fmt.Println(len(lastExpress), cap(lastExpress))
 	fmt.Println(len(lastExpressPart), cap(lastExpressPart))
+
+	// exercises
+	// 1. Опишіть слайсами потяг, який проїжджає три станції, і на кожній до нього приєднується ще три вагона
+	// 2. Опишіть слайсами вечірку, на яку всі прийшли парами. Усього 4 пари, але поступово вони пішли з вечірки (використовуй масив, як елемент слайса)
+	// 3. * Опішіть слайсами зростання дерева. Спочатку у нього одна гілка, потім три, потім 6, потім 12, потім 24, і на прикінці - 48
 }
