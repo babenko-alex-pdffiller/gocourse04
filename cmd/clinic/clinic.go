@@ -1,4 +1,4 @@
-package clinic
+package main
 
 import (
 	"encoding/json"
