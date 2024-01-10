@@ -1,7 +1,7 @@
 package main
 
 import (
-	"reflect"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -10,9 +10,9 @@ func TestAddPatient(t *testing.T) {
 	patient := Patient{ID: "1", Name: "John Doe", Age: 30, BloodType: "A+"}
 	clinic.AddPatient(patient)
 
-	if p, exists := clinic.GetPatient("1"); !exists || !reflect.DeepEqual(p, patient) {
-		t.Errorf("AddPatient failed: expected %v, got %v", patient, p)
-	}
+	p, exists := clinic.GetPatient("1")
+	assert.True(t, exists, "Patient should exist")
+	assert.Equal(t, patient, p, "Patients should be equal")
 }
 
 func TestFindPatientsByBloodType(t *testing.T) {
@@ -21,9 +21,8 @@ func TestFindPatientsByBloodType(t *testing.T) {
 	clinic.AddPatient(Patient{ID: "2", Name: "Jane Doe", Age: 28, BloodType: "O-"})
 
 	found := clinic.FindPatientsByBloodType("O-")
-	if len(found) != 1 || found[0].ID != "2" {
-		t.Errorf("FindPatientsByBloodType failed: expected 1 patient with ID 2, got %v", found)
-	}
+	assert.Len(t, found, 1, "Should find one patient")
+	assert.Equal(t, "2", found[0].ID, "Patient ID should be 2")
 }
 
 func TestSerialization(t *testing.T) {
@@ -31,18 +30,13 @@ func TestSerialization(t *testing.T) {
 	clinic.AddPatient(Patient{ID: "1", Name: "John Doe", Age: 30, BloodType: "A+"})
 
 	serialized, err := clinic.SerializePatients()
-	if err != nil {
-		t.Errorf("SerializePatients failed: %v", err)
-	}
+	assert.NoError(t, err, "SerializePatients should not error")
 
 	newClinic := NewClinic()
-	if err := newClinic.DeserializePatients(serialized); err != nil {
-		t.Errorf("DeserializePatients failed: %v", err)
-	}
+	assert.NoError(t, newClinic.DeserializePatients(serialized), "DeserializePatients should not error")
 
-	if _, exists := newClinic.GetPatient("1"); !exists {
-		t.Errorf("DeserializePatients failed: patient ID 1 not found")
-	}
+	_, exists := newClinic.GetPatient("1")
+	assert.True(t, exists, "Patient ID 1 should exist after deserialization")
 }
 
 func BenchmarkFindInArray(b *testing.B) {
