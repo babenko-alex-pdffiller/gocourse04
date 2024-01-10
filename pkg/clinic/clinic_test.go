@@ -1,4 +1,4 @@
-package main
+package clinic
 
 import (
 	"reflect"
@@ -42,5 +42,38 @@ func TestSerialization(t *testing.T) {
 
 	if _, exists := newClinic.GetPatient("1"); !exists {
 		t.Errorf("DeserializePatients failed: patient ID 1 not found")
+	}
+}
+
+func BenchmarkFindInArray(b *testing.B) {
+	patients := generatePatients()
+	var array [1000]Patient
+	copy(array[:], patients[:])
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		findInArray(array, "A+")
+	}
+}
+
+func BenchmarkFindInSlice(b *testing.B) {
+	patients := generatePatients()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		findInSlice(patients, "A+")
+	}
+}
+
+func BenchmarkFindInMap(b *testing.B) {
+	clinic := NewClinic()
+	patients := generatePatients()
+	for _, p := range patients {
+		clinic.AddPatient(p)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		clinic.FindPatientsByBloodType("A+")
 	}
 }

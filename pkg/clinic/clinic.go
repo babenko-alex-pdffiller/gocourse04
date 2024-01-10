@@ -1,8 +1,9 @@
-package main
+package clinic
 
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 )
 
 // Patient - структура, що представляє пацієнта
@@ -78,29 +79,35 @@ func (c *Clinic) DeserializePatients(data string) error {
 	return nil
 }
 
-func main() {
-	clinic := NewClinic()
-
-	// Додавання пацієнтів
-	clinic.AddPatient(Patient{ID: "p1", Name: "John Doe", Age: 30, BloodType: "A"})
-	clinic.AddPatient(Patient{ID: "p2", Name: "Jane Doe", Age: 25, BloodType: "B"})
-
-	// Серіалізація пацієнтів
-	serializedData, err := clinic.SerializePatients()
-	if err != nil {
-		fmt.Println("Помилка серіалізації:", err)
-		return
+func generatePatients() []Patient {
+	var patients []Patient
+	for i := 0; i < 1000; i++ {
+		patients = append(patients, Patient{
+			ID:        fmt.Sprintf("%d", i),
+			Name:      fmt.Sprintf("Patient %d", i),
+			Age:       rand.Intn(100),
+			BloodType: []string{"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"}[rand.Intn(8)],
+		})
 	}
-	fmt.Println("Серіалізовані дані:", serializedData)
+	return patients
+}
 
-	// Десеріалізація пацієнтів
-	if err := clinic.DeserializePatients(serializedData); err != nil {
-		fmt.Println("Помилка десеріалізації:", err)
-		return
+func findInArray(patients [1000]Patient, bloodType string) []Patient {
+	var found []Patient
+	for _, p := range patients {
+		if p.BloodType == bloodType {
+			found = append(found, p)
+		}
 	}
+	return found
+}
 
-	// Перевірка десеріалізації
-	if patient, exists := clinic.GetPatient("p1"); exists {
-		fmt.Println("Десеріалізований пацієнт:", patient)
+func findInSlice(patients []Patient, bloodType string) []Patient {
+	var found []Patient
+	for _, p := range patients {
+		if p.BloodType == bloodType {
+			found = append(found, p)
+		}
 	}
+	return found
 }
