@@ -33,49 +33,54 @@ func TestMoveAnimal(t *testing.T) {
 	}
 }
 
-func TestFindAnimalByName(t *testing.T) {
+func TestFindAnimalByNameSuccessful(t *testing.T) {
 	// Arrange
 	z := Zoo{
 		Areas: buildAreas(),
 	}
-
-	found := false
-
 	//Ac
-	for _, area := range z.Areas {
-		animalsSector := area.Sectors["animals"]
-		for _, animal := range animalsSector.Animals {
-			if animal.Name == "Eagle" {
-				found = true
-				break
-			}
-		}
-	}
+	_, err := FindAnimalByName(z.Areas, "Eagle")
 	// Assert
-	if !found {
-		t.Error("expected to find Eagle, but it was not found")
+	if nil != err {
+		t.Errorf("expected to find Eagle, but got error %s", err)
 	}
 }
 
-func TestFindAnimalByID(t *testing.T) {
+func TestFindAnimalByNameFailed(t *testing.T) {
 	// Arrange
 	z := Zoo{
 		Areas: buildAreas(),
 	}
-
-	found := false
-	// Act
-	for _, area := range z.Areas {
-		animalsSector := area.Sectors["animals"]
-		for _, animal := range animalsSector.Animals {
-			if animal.ID == 8 {
-				found = true
-				break
-			}
-		}
-	}
+	//Ac
+	animal, err := FindAnimalByName(z.Areas, "Duck")
 	// Assert
-	if !found {
-		t.Error("expected to find animal with ID 8, but it was not found")
+	if nil == err {
+		t.Errorf("expected get error, but got animal %v", animal)
+	}
+}
+
+func TestFindAnimalByIDSuccessful(t *testing.T) {
+	// Arrange
+	z := Zoo{
+		Areas: buildAreas(),
+	}
+	// Act
+	animal, _ := FindAnimalByID(z.Areas, 8)
+	// Assert
+	if animal.ID != 8 {
+		t.Errorf("expected animal ID = 8, but got %d", animal.ID)
+	}
+}
+
+func TestFindAnimalByIDFailed(t *testing.T) {
+	// Arrange
+	z := Zoo{
+		Areas: buildAreas(),
+	}
+	// Act
+	animal, err := FindAnimalByID(z.Areas, 18)
+	// Assert
+	if nil == err {
+		t.Errorf("expected get error, but got animal %v", animal)
 	}
 }

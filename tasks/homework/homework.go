@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Animal struct {
 	ID   int
@@ -16,9 +18,8 @@ type Area struct {
 }
 
 type Sector struct {
-	selectedAnimalID int
-	Subtype          string
-	Animals          []Animal
+	Subtype string
+	Animals []Animal
 }
 
 func (s *Sector) AddAnimal(animal Animal) {
@@ -56,37 +57,24 @@ func (z Zoo) Lookup(name string) *Sector {
 }
 
 func main() {
-
 	z := Zoo{
 		Areas: buildAreas(),
 	}
 
-	fmt.Println("Try to find Eagle")
-
-	for _, area := range z.Areas {
-		technicalSector := area.Sectors["technical"]
-		animalsSector := area.Sectors["animals"]
-		for _, animal := range animalsSector.Animals {
-			if animal.Name == "Eagle" {
-				fmt.Printf("%s found, animal ID %d\n", animal.Name, animal.ID)
-			}
-			technicalSector.Feed(&animal)
-		}
-		technicalSector.CleanUp()
+	fmt.Println("Try to find by name Eagle")
+	eagle, err := FindAnimalByName(z.Areas, "Eagle")
+	if nil == err {
+		fmt.Printf("%s has ID: %d\n", eagle.Name, eagle.ID)
+	} else {
+		fmt.Println(err)
 	}
 
 	fmt.Println("Try to find by ID 8")
-
-	for _, area := range z.Areas {
-		technicalSector := area.Sectors["technical"]
-		animalsSector := area.Sectors["animals"]
-		for _, animal := range animalsSector.Animals {
-			if animal.ID == 8 {
-				fmt.Printf("%s found, animal ID %d\n", animal.Name, animal.ID)
-			}
-			technicalSector.Feed(&animal)
-		}
-		technicalSector.CleanUp()
+	gorilla, err := FindAnimalByID(z.Areas, 8)
+	if nil == err {
+		fmt.Printf("Animal with ID = %d has Name %s\n", gorilla.ID, gorilla.Name)
+	} else {
+		fmt.Println(err)
 	}
 
 	newAnimals := Sector{
@@ -105,6 +93,38 @@ func main() {
 	for _, animal := range z.Areas["ungulates"].Sectors["newAnimals"].Animals {
 		fmt.Printf("%s found, animal ID %d\n", animal.Name, animal.ID)
 	}
+}
+
+func FindAnimalByName(areas Areas, name string) (*Animal, error) {
+	for _, area := range areas {
+		technicalSector := area.Sectors["technical"]
+		animalsSector := area.Sectors["animals"]
+		for _, animal := range animalsSector.Animals {
+			if name == animal.Name {
+				technicalSector.Feed(&animal)
+				return &animal, nil
+			}
+		}
+		technicalSector.CleanUp()
+	}
+
+	return nil, fmt.Errorf("%s not found", name)
+}
+
+func FindAnimalByID(areas Areas, ID int) (*Animal, error) {
+	for _, area := range areas {
+		technicalSector := area.Sectors["technical"]
+		animalsSector := area.Sectors["animals"]
+		for _, animal := range animalsSector.Animals {
+			if ID == animal.ID {
+				technicalSector.Feed(&animal)
+				return &animal, nil
+			}
+		}
+		technicalSector.CleanUp()
+	}
+
+	return nil, fmt.Errorf("Animal with ID = %d not found", ID)
 }
 
 func buildAreas() Areas {
