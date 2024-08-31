@@ -38,7 +38,7 @@ func TestFindAnimalByNameSuccessful(t *testing.T) {
 	z := Zoo{
 		Areas: buildAreas(),
 	}
-	//Ac
+	// Act
 	_, err := FindAnimalByName(z.Areas, "Eagle")
 	// Assert
 	if nil != err {
@@ -51,7 +51,7 @@ func TestFindAnimalByNameFailed(t *testing.T) {
 	z := Zoo{
 		Areas: buildAreas(),
 	}
-	//Ac
+	// Act
 	animal, err := FindAnimalByName(z.Areas, "Duck")
 	// Assert
 	if nil == err {
@@ -65,8 +65,11 @@ func TestFindAnimalByIDSuccessful(t *testing.T) {
 		Areas: buildAreas(),
 	}
 	// Act
-	animal, _ := FindAnimalByID(z.Areas, 8)
+	animal, err := FindAnimalByID(z.Areas, 8)
 	// Assert
+	if nil != err {
+		t.Errorf("expected to find Gorilla, but got error %s", err)
+	}
 	if animal.ID != 8 {
 		t.Errorf("expected animal ID = 8, but got %d", animal.ID)
 	}
