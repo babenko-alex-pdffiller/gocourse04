@@ -17,6 +17,11 @@ type Area struct {
 	Sectors map[string]Sector
 }
 
+const (
+	SectorTypeTechnical = "technical"
+	SectorTypeAnimals   = "animals"
+)
+
 type Sector struct {
 	Subtype string
 	Animals []Animal
@@ -37,13 +42,13 @@ func (s *Sector) MoveAnimal(animalID int, distSector *Sector) {
 }
 
 func (s *Sector) CleanUp() {
-	if s.Subtype == "technical" {
+	if s.Subtype == SectorTypeTechnical {
 		fmt.Println("technical sector cleaned up")
 	}
 }
 
 func (s *Sector) Feed(animal *Animal) {
-	if s.Subtype == "technical" {
+	if s.Subtype == SectorTypeTechnical {
 		fmt.Printf("feeding the %s\n", animal.Name)
 	}
 }
@@ -52,17 +57,13 @@ type Zoo struct {
 	Areas Areas
 }
 
-func (z Zoo) Lookup(name string) *Sector {
-	return &Sector{}
-}
-
 func main() {
 	z := Zoo{
 		Areas: buildAreas(),
 	}
 
 	fmt.Println("Try to find by name Eagle")
-	eagle, err := FindAnimalByName(z.Areas, "Eagle")
+	eagle, err := z.FindAnimalByName("Eagle")
 	if nil == err {
 		fmt.Printf("%s has ID: %d\n", eagle.Name, eagle.ID)
 	} else {
@@ -70,7 +71,7 @@ func main() {
 	}
 
 	fmt.Println("Try to find by ID 8")
-	gorilla, err := FindAnimalByID(z.Areas, 8)
+	gorilla, err := z.FindAnimalByID(8)
 	if nil == err {
 		fmt.Printf("Animal with ID = %d has Name %s\n", gorilla.ID, gorilla.Name)
 	} else {
@@ -78,13 +79,13 @@ func main() {
 	}
 
 	newAnimals := Sector{
-		Subtype: "animals",
+		Subtype: SectorTypeAnimals,
 		Animals: []Animal{
 			{ID: 10, Name: "Cow"},
 		},
 	}
 
-	ungulatesAnimals := z.Areas["ungulates"].Sectors["animals"]
+	ungulatesAnimals := z.Areas["ungulates"].Sectors[SectorTypeAnimals]
 	ungulatesAnimals.MoveAnimal(2, &newAnimals)
 
 	z.Areas["ungulates"].Sectors["newAnimals"] = newAnimals
@@ -95,36 +96,34 @@ func main() {
 	}
 }
 
-func FindAnimalByName(areas Areas, name string) (*Animal, error) {
-	for _, area := range areas {
-		technicalSector := area.Sectors["technical"]
-		animalsSector := area.Sectors["animals"]
+func (z *Zoo) FindAnimalByName(name string) (*Animal, error) {
+	for _, area := range z.Areas {
+		technicalSector := area.Sectors[SectorTypeTechnical]
+		animalsSector := area.Sectors[SectorTypeAnimals]
 		for _, animal := range animalsSector.Animals {
 			if name == animal.Name {
 				technicalSector.Feed(&animal)
 				return &animal, nil
 			}
 		}
-		technicalSector.CleanUp()
 	}
 
 	return nil, fmt.Errorf("%s not found", name)
 }
 
-func FindAnimalByID(areas Areas, ID int) (*Animal, error) {
-	for _, area := range areas {
-		technicalSector := area.Sectors["technical"]
-		animalsSector := area.Sectors["animals"]
+func (z *Zoo) FindAnimalByID(id int) (*Animal, error) {
+	for _, area := range z.Areas {
+		technicalSector := area.Sectors[SectorTypeTechnical]
+		animalsSector := area.Sectors[SectorTypeAnimals]
 		for _, animal := range animalsSector.Animals {
-			if ID == animal.ID {
+			if id == animal.ID {
 				technicalSector.Feed(&animal)
 				return &animal, nil
 			}
 		}
-		technicalSector.CleanUp()
 	}
 
-	return nil, fmt.Errorf("Animal with ID = %d not found", ID)
+	return nil, fmt.Errorf("Animal with ID = %d not found", id)
 }
 
 func buildAreas() Areas {
@@ -133,16 +132,16 @@ func buildAreas() Areas {
 			Name: "ungulates",
 			Type: "ungulates",
 			Sectors: map[string]Sector{
-				"animals": {
-					Subtype: "animals",
+				SectorTypeAnimals: {
+					Subtype: SectorTypeAnimals,
 					Animals: []Animal{
 						{ID: 1, Name: "Deer"},
 						{ID: 2, Name: "Horse"},
 						{ID: 3, Name: "Bison"},
 					},
 				},
-				"technical": {
-					Subtype: "technical",
+				SectorTypeTechnical: {
+					Subtype: SectorTypeTechnical,
 				},
 			},
 		},
@@ -150,16 +149,16 @@ func buildAreas() Areas {
 			Name: "feathered",
 			Type: "feathered",
 			Sectors: map[string]Sector{
-				"animals": {
-					Subtype: "animals",
+				SectorTypeAnimals: {
+					Subtype: SectorTypeAnimals,
 					Animals: []Animal{
 						{ID: 4, Name: "Parrot"},
 						{ID: 5, Name: "Eagle"},
 						{ID: 6, Name: "Penguin"},
 					},
 				},
-				"technical": {
-					Subtype: "technical",
+				SectorTypeTechnical: {
+					Subtype: SectorTypeTechnical,
 				},
 			},
 		},
@@ -167,16 +166,16 @@ func buildAreas() Areas {
 			Name: "primates",
 			Type: "primates",
 			Sectors: map[string]Sector{
-				"animals": {
-					Subtype: "animals",
+				SectorTypeAnimals: {
+					Subtype: SectorTypeAnimals,
 					Animals: []Animal{
 						{ID: 7, Name: "Chimpanzee"},
 						{ID: 8, Name: "Gorilla"},
 						{ID: 9, Name: "Orangutan"},
 					},
 				},
-				"technical": {
-					Subtype: "technical",
+				SectorTypeTechnical: {
+					Subtype: SectorTypeTechnical,
 				},
 			},
 		},
