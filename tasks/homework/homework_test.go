@@ -28,7 +28,7 @@ func TestMoveAnimal(t *testing.T) {
 		t.Errorf("expected 1 animal in new sector, got %d", len(newSector.Animals))
 	}
 
-	if newSector.Animals[0].Name != "Horse" {
+	if len(newSector.Animals) > 0 && newSector.Animals[0].Name != "Horse" {
 		t.Errorf("expected 'Horse' in new sector, got %s", newSector.Animals[0].Name)
 	}
 }
@@ -67,7 +67,7 @@ func TestFindAnimalByIDSuccessful(t *testing.T) {
 	// Act
 	animal, err := z.FindAnimalByID(8)
 	// Assert
-	if nil != err {
+	if err != nil {
 		t.Errorf("expected to find Gorilla, but got error %s", err)
 	}
 	if animal.ID != 8 {
@@ -83,7 +83,7 @@ func TestFindAnimalByIDFailed(t *testing.T) {
 	// Act
 	animal, err := z.FindAnimalByID(18)
 	// Assert
-	if nil == err {
+	if err == nil {
 		t.Errorf("expected get error, but got animal %v", animal)
 	}
 }

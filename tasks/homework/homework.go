@@ -7,6 +7,7 @@ import (
 type Animal struct {
 	ID   int
 	Name string
+	Type string
 }
 
 type Areas map[string]Area
@@ -20,6 +21,9 @@ type Area struct {
 const (
 	SectorTypeTechnical = "technical"
 	SectorTypeAnimals   = "animals"
+	AnimalUngulatesType = "ungulates"
+	AnimalFeatheredType = "feathered"
+	AnimalPrimatesType  = "primates"
 )
 
 type Sector struct {
@@ -64,16 +68,20 @@ func main() {
 
 	fmt.Println("Try to find by name Eagle")
 	eagle, err := z.FindAnimalByName("Eagle")
-	if nil == err {
+	if err == nil {
 		fmt.Printf("%s has ID: %d\n", eagle.Name, eagle.ID)
+		sector := z.Areas[eagle.Type].Sectors[SectorTypeTechnical]
+		sector.Feed(eagle)
 	} else {
 		fmt.Println(err)
 	}
 
 	fmt.Println("Try to find by ID 8")
 	gorilla, err := z.FindAnimalByID(8)
-	if nil == err {
+	if err == nil {
 		fmt.Printf("Animal with ID = %d has Name %s\n", gorilla.ID, gorilla.Name)
+		sector := z.Areas[gorilla.Type].Sectors[SectorTypeTechnical]
+		sector.Feed(gorilla)
 	} else {
 		fmt.Println(err)
 	}
@@ -85,24 +93,22 @@ func main() {
 		},
 	}
 
-	ungulatesAnimals := z.Areas["ungulates"].Sectors[SectorTypeAnimals]
+	ungulatesAnimals := z.Areas[AnimalUngulatesType].Sectors[SectorTypeAnimals]
 	ungulatesAnimals.MoveAnimal(2, &newAnimals)
 
-	z.Areas["ungulates"].Sectors["newAnimals"] = newAnimals
+	z.Areas[AnimalUngulatesType].Sectors["newAnimals"] = newAnimals
 
 	fmt.Println("Animals from new sector")
-	for _, animal := range z.Areas["ungulates"].Sectors["newAnimals"].Animals {
+	for _, animal := range z.Areas[AnimalUngulatesType].Sectors["newAnimals"].Animals {
 		fmt.Printf("%s found, animal ID %d\n", animal.Name, animal.ID)
 	}
 }
 
 func (z *Zoo) FindAnimalByName(name string) (*Animal, error) {
 	for _, area := range z.Areas {
-		technicalSector := area.Sectors[SectorTypeTechnical]
 		animalsSector := area.Sectors[SectorTypeAnimals]
 		for _, animal := range animalsSector.Animals {
 			if name == animal.Name {
-				technicalSector.Feed(&animal)
 				return &animal, nil
 			}
 		}
@@ -113,11 +119,9 @@ func (z *Zoo) FindAnimalByName(name string) (*Animal, error) {
 
 func (z *Zoo) FindAnimalByID(id int) (*Animal, error) {
 	for _, area := range z.Areas {
-		technicalSector := area.Sectors[SectorTypeTechnical]
 		animalsSector := area.Sectors[SectorTypeAnimals]
 		for _, animal := range animalsSector.Animals {
 			if id == animal.ID {
-				technicalSector.Feed(&animal)
 				return &animal, nil
 			}
 		}
@@ -128,9 +132,9 @@ func (z *Zoo) FindAnimalByID(id int) (*Animal, error) {
 
 func buildAreas() Areas {
 	return Areas{
-		"ungulates": {
-			Name: "ungulates",
-			Type: "ungulates",
+		AnimalUngulatesType: {
+			Name: AnimalUngulatesType,
+			Type: AnimalUngulatesType,
 			Sectors: map[string]Sector{
 				SectorTypeAnimals: {
 					Subtype: SectorTypeAnimals,
@@ -145,9 +149,9 @@ func buildAreas() Areas {
 				},
 			},
 		},
-		"feathered": {
-			Name: "feathered",
-			Type: "feathered",
+		AnimalFeatheredType: {
+			Name: AnimalFeatheredType,
+			Type: AnimalFeatheredType,
 			Sectors: map[string]Sector{
 				SectorTypeAnimals: {
 					Subtype: SectorTypeAnimals,
@@ -162,9 +166,9 @@ func buildAreas() Areas {
 				},
 			},
 		},
-		"primates": {
-			Name: "primates",
-			Type: "primates",
+		AnimalPrimatesType: {
+			Name: AnimalPrimatesType,
+			Type: AnimalPrimatesType,
 			Sectors: map[string]Sector{
 				SectorTypeAnimals: {
 					Subtype: SectorTypeAnimals,
