@@ -10,7 +10,7 @@ func TestMoveAnimal(t *testing.T) {
 		Areas: buildAreas(),
 	}
 
-	ungulatesAnimals := z.Areas["ungulates"].Sectors["animals"]
+	ungulatesAnimals := z.Areas[AnimalTypeUngulates].Sectors[SectorTypeAnimals]
 	newSector := Sector{
 		Subtype: "animals",
 		Animals: []Animal{},
@@ -39,10 +39,14 @@ func TestFindAnimalByNameSuccessful(t *testing.T) {
 		Areas: buildAreas(),
 	}
 	// Act
-	_, err := z.FindAnimalByName("Eagle")
+	animal, err := z.FindAnimalByName("Eagle")
 	// Assert
 	if err != nil {
 		t.Errorf("expected to find Eagle, but got error %s", err)
+	}
+
+	if animal.Name != "Eagle" {
+		t.Errorf("expected animal name 'Eagle', but got %s", animal.Name)
 	}
 }
 
@@ -52,10 +56,10 @@ func TestFindAnimalByNameFailed(t *testing.T) {
 		Areas: buildAreas(),
 	}
 	// Act
-	animal, err := z.FindAnimalByName("Duck")
+	_, err := z.FindAnimalByName("Duck")
 	// Assert
 	if err == nil {
-		t.Errorf("expected get error, but got animal %v", animal)
+		t.Error("expected get error, but got <nil>")
 	}
 }
 
@@ -81,9 +85,9 @@ func TestFindAnimalByIDFailed(t *testing.T) {
 		Areas: buildAreas(),
 	}
 	// Act
-	animal, err := z.FindAnimalByID(18)
+	_, err := z.FindAnimalByID(18)
 	// Assert
 	if err == nil {
-		t.Errorf("expected get error, but got animal %v", animal)
+		t.Error("expected get error, but got <nil>")
 	}
 }

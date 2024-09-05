@@ -21,9 +21,10 @@ type Area struct {
 const (
 	SectorTypeTechnical = "technical"
 	SectorTypeAnimals   = "animals"
-	AnimalUngulatesType = "ungulates"
-	AnimalFeatheredType = "feathered"
-	AnimalPrimatesType  = "primates"
+
+	AnimalTypeUngulates = "ungulates"
+	AnimalTypeFeathered = "feathered"
+	AnimalTypePrimates  = "primates"
 )
 
 type Sector struct {
@@ -93,13 +94,13 @@ func main() {
 		},
 	}
 
-	ungulatesAnimals := z.Areas[AnimalUngulatesType].Sectors[SectorTypeAnimals]
+	ungulatesAnimals := z.Areas[AnimalTypeUngulates].Sectors[SectorTypeAnimals]
 	ungulatesAnimals.MoveAnimal(2, &newAnimals)
 
-	z.Areas[AnimalUngulatesType].Sectors["newAnimals"] = newAnimals
+	z.Areas[AnimalTypeUngulates].Sectors["newAnimals"] = newAnimals
 
 	fmt.Println("Animals from new sector")
-	for _, animal := range z.Areas[AnimalUngulatesType].Sectors["newAnimals"].Animals {
+	for _, animal := range z.Areas[AnimalTypeUngulates].Sectors["newAnimals"].Animals {
 		fmt.Printf("%s found, animal ID %d\n", animal.Name, animal.ID)
 	}
 }
@@ -132,16 +133,16 @@ func (z *Zoo) FindAnimalByID(id int) (*Animal, error) {
 
 func buildAreas() Areas {
 	return Areas{
-		AnimalUngulatesType: {
-			Name: AnimalUngulatesType,
-			Type: AnimalUngulatesType,
+		AnimalTypeUngulates: {
+			Name: AnimalTypeUngulates,
+			Type: AnimalTypeUngulates,
 			Sectors: map[string]Sector{
 				SectorTypeAnimals: {
 					Subtype: SectorTypeAnimals,
 					Animals: []Animal{
-						{ID: 1, Name: "Deer"},
-						{ID: 2, Name: "Horse"},
-						{ID: 3, Name: "Bison"},
+						{ID: 1, Name: "Deer", Type: AnimalTypeUngulates},
+						{ID: 2, Name: "Horse", Type: AnimalTypeUngulates},
+						{ID: 3, Name: "Bison", Type: AnimalTypeUngulates},
 					},
 				},
 				SectorTypeTechnical: {
@@ -149,16 +150,16 @@ func buildAreas() Areas {
 				},
 			},
 		},
-		AnimalFeatheredType: {
-			Name: AnimalFeatheredType,
-			Type: AnimalFeatheredType,
+		AnimalTypeFeathered: {
+			Name: AnimalTypeFeathered,
+			Type: AnimalTypeFeathered,
 			Sectors: map[string]Sector{
 				SectorTypeAnimals: {
 					Subtype: SectorTypeAnimals,
 					Animals: []Animal{
-						{ID: 4, Name: "Parrot"},
-						{ID: 5, Name: "Eagle"},
-						{ID: 6, Name: "Penguin"},
+						{ID: 4, Name: "Parrot", Type: AnimalTypeFeathered},
+						{ID: 5, Name: "Eagle", Type: AnimalTypeFeathered},
+						{ID: 6, Name: "Penguin", Type: AnimalTypeFeathered},
 					},
 				},
 				SectorTypeTechnical: {
@@ -166,16 +167,16 @@ func buildAreas() Areas {
 				},
 			},
 		},
-		AnimalPrimatesType: {
-			Name: AnimalPrimatesType,
-			Type: AnimalPrimatesType,
+		AnimalTypePrimates: {
+			Name: AnimalTypePrimates,
+			Type: AnimalTypePrimates,
 			Sectors: map[string]Sector{
 				SectorTypeAnimals: {
 					Subtype: SectorTypeAnimals,
 					Animals: []Animal{
-						{ID: 7, Name: "Chimpanzee"},
-						{ID: 8, Name: "Gorilla"},
-						{ID: 9, Name: "Orangutan"},
+						{ID: 7, Name: "Chimpanzee", Type: AnimalTypePrimates},
+						{ID: 8, Name: "Gorilla", Type: AnimalTypePrimates},
+						{ID: 9, Name: "Orangutan", Type: AnimalTypePrimates},
 					},
 				},
 				SectorTypeTechnical: {
